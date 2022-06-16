@@ -1,0 +1,140 @@
+<div class="col-md-6 offset-md-3">
+
+    <div class="card bg-dark text-light">
+        <div class="card-header">
+            <h1 class="h4 text-white">Selecciona Lista de la compra</h1>
+        </div> 
+        <div class="card-body">
+            <form action="/shoppingList" method="POST">
+                <div class="row">                    
+                    <div class="col">
+                        <select class="form-select" aria-label="shoppingList" value="{{shoppingList.Id}}" name="shoppingList">
+                            <option selected>Selecciona una Lista</option>
+                            <option value="jCNEpRIS1qXkYY1g6hAY">jCNEpRIS1qXkYY1g6hAY</option>
+                            <option value="2CCXvpkh5hxU0Nr20LIR ">2CCXvpkh5hxU0Nr20LIR </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">                        
+                        <a href="/" class="btn btn-primary">Nueva</a> 
+                        <button class="btn btn-secondary btn-block" type="submit">Seleccionar</button>
+                        <a href="/" class="btn btn-danger">Eliminar</a>                        
+                    </div>                    
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card bg-dark text-light">
+        <div class="card-header">
+            <h1 class="h4 text-white">Lista de la compra</h1>
+        </div> 
+
+        <div class="card-body">
+            {{#if items}}
+                <ul class="list-group">
+                    {{#each items}}
+                        <li class="list-group-item flex justify-content-between align-items-center">
+                            <h3>{{item}} <a class="btn btn-secondary" href="/delete-item/{{id}}"><i class="fa-solid fa-trash-can"></i></a>
+                            <a class="btn btn-secondary" href="/edit-item/{{id}}"><i class="fa-solid fa-pen-to-square"></i></a></h3>
+                            <p>({{section}}) {{quantity}} {{uom}} => {{total}} <i class="fa-solid fa-euro-sign"></i>                         
+                            </p>
+                        </li>
+                    {{/each}}
+                </ul>
+            {{else}}
+                <p>No hay productos en la lista de la compra</p>
+            {{/if}}
+        </div>
+
+        <div class="card-footer">        
+            <form action="{{#unless item.id}}/new-item{{else}}/update-item/{{item.id}}{{/unless}}" method="POST">
+                <div class="col">
+                    <select class="form-select" aria-label="shoppingList" value="{{item.shoppingListId}}" name="shoppingListId" required>
+                        <option selected>Selecciona una Lista</option>
+                        <option value="jCNEpRIS1qXkYY1g6hAY">jCNEpRIS1qXkYY1g6hAY</option>
+                        <option value="2CCXvpkh5hxU0Nr20LIR ">2CCXvpkh5hxU0Nr20LIR </option>
+                    </select>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label for="item">Producto:</label>
+                        <input class="form-control mb-2" type="text" name="item" placeholder="Producto" id="item" value="{{item.item}}" required>
+                    </div>            
+                    <div class="col">                
+                        <label for="quantity">Cantidad:</label>
+                        <input class="form-control mb-2" type="text" name="quantity" placeholder="Cantidad" onchange="calculateTotal()" id="quantity" value="{{item.quantity}}" required step=".1">
+                    </div>
+                    <div class="col">                
+                        <label for="uom">Medida:</label>
+                        <!-- <input class="form-control mb-2" type="text" name="uom" placeholder="Medida" id="uom" value="{{item.uom}}"> -->
+                        <select class="form-select" aria-label="uom" value="{{item.uom}}" name="uom" required>
+                            <option selected>Selecciona una medida</option>
+                            <option value="Unidad">Unidad</option>
+                            <option value="Kg">Kg</option>
+                            <option value="Grs">Grs</option>
+                            <option value="L">L</option>
+                        </select>
+                    </div>
+                    <div class="col-md-12">
+                        <label for="section">Seccion:</label>
+                        <!-- <input class="form-control mb-2" type="text" name="section" placeholder="Seccion" id="section" value="{{item.section}}"> -->
+                        <select class="form-select" aria-label="section" value="{{item.section}}" name="section" required>
+                            <option selected>Selecciona una seccion</option>
+                            <option value="Bebidas">Bebidas</option>
+                            <option value="Carniceria">Carniceria</option>
+                            <option value="Charcuteria">Charcuteria</option>
+                            <option value="Drogueria">Drogeria</option>
+                            <option value="Fruteria">Fruteria</option>
+                            <option value="Higiene">Higiene</option>
+                            <option value="Limpieza">Limpieza</option>
+                            <option value="Pescaderia">Pescaderia</option>                            
+                            <option value="Perfumeria">Perfumeria</option>
+                            <option value="Snacks">Snacks</option>
+                            <option value="Varios">Varios</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row mt-2"> 
+                    <div class="col">
+                        <label for="total">Precio por Unidad:</label>
+                        <input class="form-control mb-2" type="number" name="price" placeholder="Importe" id="price" required step=".01" onchange="calculateTotal()">   
+                    </div>
+                    
+                     <div class="col">
+                        <label for="total">Precio Total:</label>
+                        <input class="form-control mb-2" type="number" name="total" placeholder="Total" id="total" value="{{item.total}}" disabled step=".01">   
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">
+                        {{#if item.id}}
+                            <button class="btn btn-danger btn-block" type="submit">Update</button>
+                            <a href="/" class="btn btn-secondary">Cancel</a>
+                        {{else}}
+                            <button class="btn btn-primary btn-block" type="submit">Submit</button>
+                        {{/if}}
+                    </div>
+                    
+                </div>
+
+            </form>
+        </div>
+
+    </div>   
+
+</div>
+<script>
+    function calculateTotal(){       
+        var $price = document.getElementById('price');
+        var $total = document.getElementById('total');
+        var $quantity = document.getElementById('quantity');
+
+        $total.value = $price.value * $quantity.value;
+        console.log($quantity.value);
+        if($quantity.value == 0)
+            alert('Introduce un cantidad de producto');
+    }
+</script>
